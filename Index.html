@@ -1,149 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ouma Hive | Creatives & Hustlers</title>
-<style>
-  /* ===== Global Styles ===== */
-  body { margin:0; font-family:'Arial',sans-serif; background:#f0f2f5; color:#1c1e21; }
-  a{text-decoration:none;}
-  button{cursor:pointer; transition:0.2s ease;}
-  button:hover{opacity:0.9; transform:scale(1.02);}
-  header{background:#fff; padding:1rem 2rem; box-shadow:0 2px 5px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:1000;}
-  header h1{margin:0; font-size:1.8rem; color:#1877f2;}
-  nav a{margin:0 12px; color:#1c1e21; font-weight:bold;}
-  nav a:hover{color:#1877f2;}
-  .container{max-width:1200px; margin:2rem auto; padding:0 1rem;}
-  .section-title{font-size:1.8rem; color:#1877f2; margin-bottom:1rem; border-bottom:2px solid #1877f2; display:inline-block; padding-bottom:5px;}
-  .cards-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px;}
-  .card{background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1); overflow:hidden; transition:transform 0.3s,box-shadow 0.3s;}
-  .card:hover{transform:scale(1.02); box-shadow:0 6px 20px rgba(0,0,0,0.15);}
-  .card img{width:100%; display:block; cursor:pointer;}
-  .card-content{padding:1rem;}
-  .card-content h2{margin:0 0 0.5rem; font-size:1.2rem;}
-  .card-content p{margin:0 0 0.5rem; color:#606770;}
-  .card-content .tools{font-size:0.9rem; color:#90949c;}
-  .card-actions{display:flex; gap:1rem; padding:0.5rem 1rem 1rem; border-top:1px solid #e4e6eb;}
-  .card-actions button{border:none; background:none; color:#606770; cursor:pointer; display:flex; align-items:center; gap:0.3rem; font-size:0.9rem;}
-  .card-actions button:hover{color:#1877f2;}
-  .filters{display:flex; gap:0.5rem; flex-wrap:wrap;}
-  .filters button{padding:0.5rem 1rem; border:none; border-radius:20px; background:#e4e6eb;}
-  .filters button.active,.filters button:hover{background:#1877f2;color:#fff;}
-  /* Modal */
-  .modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:2000;}
-  .modal-content{background:#fff; border-radius:12px; max-width:90%; max-height:90%; overflow-y:auto; padding:1rem; position:relative;}
-  .modal-content img{width:100%; margin-bottom:1rem; border-radius:8px;}
-  .modal-close{position:absolute; top:1rem; right:1rem; background:#1877f2; color:#fff; border:none; border-radius:50%; width:30px; height:30px; cursor:pointer; font-weight:bold; font-size:1rem;}
-  footer{text-align:center; padding:20px; background:#fff; color:#606770; margin-top:50px; font-size:14px;}
-  /* Responsive */
-  @media(max-width:600px){header{flex-direction:column; align-items:flex-start;}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Hive Hub | Phase 1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Helvetica:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Global Styles ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Helvetica, Arial, sans-serif; }
+    body { background: #f5f5f5; color: #333; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ===== Header ===== */
+    header {
+      background: #fff; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000;
+    }
+    header h1 { font-size: 1.5rem; color: #111; }
+    nav a { margin-left: 20px; font-weight: bold; color: #111; transition: color 0.2s; }
+    nav a:hover { color: #ff0044; }
+
+    /* ===== Main Layout ===== */
+    main { max-width: 1200px; margin: 20px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+    /* ===== Feed ===== */
+    .feed { display: flex; flex-direction: column; gap: 20px; }
+    .post-card {
+      background: #fff; border-radius: 10px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .post-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .post-card img, .post-card video { width: 100%; border-radius: 10px; margin-top: 10px; }
+    .post-card h3 { margin-bottom: 10px; font-size: 1.1rem; color: #111; }
+    .post-card p { font-size: 0.95rem; line-height: 1.4; }
+
+    /* ===== Sidebar Sections ===== */
+    .sidebar { display: flex; flex-direction: column; gap: 20px; }
+    .section-card {
+      background: #fff; border-radius: 10px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .section-card h2 { font-size: 1.2rem; margin-bottom: 10px; color: #111; }
+
+    /* ===== Artist Submission Form ===== */
+    form { display: flex; flex-direction: column; gap: 10px; }
+    form input, form textarea { padding: 10px; border-radius: 8px; border: 1px solid #ccc; width: 100%; }
+    form button { padding: 10px; background: #ff0044; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+    form button:hover { background: #e6003d; }
+
+    /* ===== Music Player ===== */
+    #music-player {
+      position: fixed; bottom: 0; left: 0; width: 100%; background: #111; color: #fff;
+      display: flex; align-items: center; justify-content: space-between; padding: 10px 20px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.2); z-index: 1000;
+    }
+    #music-player button { background: transparent; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; margin: 0 5px; }
+    #music-player span { flex: 1; text-align: center; font-weight: bold; }
+
+    /* ===== Responsive ===== */
+    @media(max-width: 900px) { main { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
 
-<header>
-  <h1>🔥 Ouma Hive</h1>
-  <nav>
-    <a href="#opportunities">Opportunities</a>
-    <a href="#creatives">Creatives</a>
-    <a href="#hustles">Hustles</a>
-    <a href="#local">Local Biz</a>
-    <a href="#submit">Submit</a>
-  </nav>
-</header>
+  <!-- ===== Header ===== -->
+  <header>
+    <h1>The Hive Hub</h1>
+    <nav>
+      <a href="#feed">Feed</a>
+      <a href="#watch">Watch</a>
+      <a href="#work">Work</a>
+      <a href="#submit">Submit</a>
+    </nav>
+  </header>
 
-<div class="container">
-
-  <!-- Opportunities -->
-  <h2 class="section-title" id="opportunities">💼 Opportunities</h2>
-  <div class="cards-grid">
-    <div class="card"><div class="card-content"><h2>Retail Assistant</h2><p>Flexible hours, fast onboarding.</p></div><div class="card-actions"><button>Apply</button></div></div>
-    <div class="card"><div class="card-content"><h2>Social Media Manager</h2><p>Run Instagram & TikTok campaigns.</p></div><div class="card-actions"><button>Apply</button></div></div>
-  </div>
-
-  <!-- Creatives Feed -->
-  <h2 class="section-title" id="creatives">🎨 Creatives</h2>
-  <div class="filters">
-    <button class="active" data-category="all">All</button>
-    <button data-category="graphic">Graphics</button>
-    <button data-category="motion">Motion</button>
-    <button data-category="branding">Branding</button>
-    <button data-category="social">Social</button>
-  </div>
-  <div class="feed" id="feed">
-    <div class="card" data-category="graphic"><img src="https://source.unsplash.com/random/800x450?design" alt="Creative"><div class="card-content"><h2>Creative Graphic</h2><p>Poster design for campaign.</p><p class="tools">Illustrator, Photoshop</p></div><div class="card-actions"><button>👍 Like</button><button>💬 Comment</button><button>🔗 Share</button></div></div>
-    <div class="card" data-category="motion"><img src="https://source.unsplash.com/random/800x450?motion" alt="Creative"><div class="card-content"><h2>Motion Graphics</h2><p>Animated short for social media.</p><p class="tools">After Effects, Premiere</p></div><div class="card-actions"><button>👍 Like</button><button>💬 Comment</button><button>🔗 Share</button></div></div>
-    <!-- Add more cards as needed -->
-  </div>
-
-  <!-- Hustles -->
-  <h2 class="section-title" id="hustles">🚀 Hustles</h2>
-  <div class="cards-grid">
-    <div class="card"><div class="card-content"><h2>Reselling Sneakers</h2><p>Start online with minimal capital.</p></div><div class="card-actions"><button>Learn More</button></div></div>
-    <div class="card"><div class="card-content"><h2>Handmade Crafts</h2><p>Sell online or at local markets.</p></div><div class="card-actions"><button>Get Started</button></div></div>
-  </div>
-
-  <!-- Local Businesses -->
-  <h2 class="section-title" id="local">🏪 Local Businesses</h2>
-  <div class="cards-grid">
-    <div class="card"><div class="card-content"><h2>Local Coffee Shop</h2><p>Best coffee and free Wi-Fi.</p></div></div>
-    <div class="card"><div class="card-content"><h2>Streetwear Brand</h2><p>Trendy apparel, online orders.</p></div></div>
-  </div>
-
-  <!-- Submit -->
-  <h2 class="section-title" id="submit">📢 Submit Opportunity</h2>
-  <div class="card">
-    <div class="card-content">
-      <input type="text" placeholder="Title">
-      <textarea placeholder="Describe opportunity"></textarea>
-      <button>Submit</button>
+  <!-- ===== Main Content ===== -->
+  <main>
+    <!-- Feed -->
+    <div class="feed" id="feed">
+      <div class="post-card">
+        <h3>Local Artist: DJ Beat</h3>
+        <p>Check out this new track! 🔥</p>
+        <audio controls>
+          <source src="music/track1.mp3" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+      <div class="post-card">
+        <h3>Video Tutorial</h3>
+        <p>Learn how to produce your own beats at home.</p>
+        <video controls>
+          <source src="video/tutorial1.mp4" type="video/mp4">
+          Your browser does not support the video element.
+        </video>
+      </div>
+      <div class="post-card">
+        <h3>Job Opportunity</h3>
+        <p>Local event looking for performers this weekend. Click the link below!</p>
+        <a href="#">View Job</a>
+      </div>
     </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Watch Section -->
+      <div class="section-card" id="watch">
+        <h2>Watch</h2>
+        <p>Videos from local artists, tutorials, and more.</p>
+      </div>
+
+      <!-- Work Section -->
+      <div class="section-card" id="work">
+        <h2>Work</h2>
+        <p>Find gigs, jobs, and opportunities near you.</p>
+      </div>
+
+      <!-- Artist Submission Form -->
+      <div class="section-card" id="submit">
+        <h2>Submit Your Content</h2>
+        <form id="artist-form">
+          <input type="text" placeholder="Artist Name" required>
+          <input type="text" placeholder="Track/Video URL" required>
+          <textarea placeholder="Description" rows="3" required></textarea>
+          <button type="submit">Submit</button>
+        </form>
+        <p style="font-size:0.8rem; color:#666;">Admin approval required before posting.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== Music Player ===== -->
+  <div id="music-player">
+    <button id="prev">⏮</button>
+    <span id="track-title">Select a track to play</span>
+    <button id="play">▶️</button>
+    <button id="next">⏭</button>
   </div>
 
-</div>
+  <!-- ===== JavaScript ===== -->
+  <script>
+    // ===== Music Player =====
+    const tracks = [
+      { title: "DJ Beat - Track 1", src: "music/track1.mp3" },
+      { title: "DJ Beat - Track 2", src: "music/track2.mp3" },
+      { title: "Chill Vibes - Track 3", src: "music/track3.mp3" }
+    ];
+    let currentTrack = 0;
+    const audio = new Audio();
+    const trackTitle = document.getElementById("track-title");
+    const playBtn = document.getElementById("play");
 
-<!-- Modal -->
-<div class="modal" id="modal">
-  <div class="modal-content">
-    <button class="modal-close" id="modal-close">×</button>
-    <img id="modal-img" src="" alt="Creative">
-    <h2 id="modal-title"></h2>
-    <p id="modal-desc"></p>
-    <p id="modal-tools"></p>
-  </div>
-</div>
+    function loadTrack(index) {
+      audio.src = tracks[index].src;
+      trackTitle.textContent = tracks[index].title;
+      audio.play();
+      playBtn.textContent = "⏸";
+    }
 
-<footer>© 2026 Ouma Hive | Built by Cebo TS | Turn your hustle into success</footer>
+    playBtn.addEventListener("click", () => {
+      if(audio.paused) { audio.play(); playBtn.textContent = "⏸"; }
+      else { audio.pause(); playBtn.textContent = "▶️"; }
+    });
 
-<script>
-  // Filter
-  const filterButtons=document.querySelectorAll('.filters button');
-  const cards=document.querySelectorAll('.feed .card');
-  filterButtons.forEach(btn=>btn.addEventListener('click',()=>{
-    filterButtons.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    const category=btn.dataset.category;
-    cards.forEach(card=>{card.style.display=(category==='all'||card.dataset.category===category)?'block':'none';});
-  }));
+    document.getElementById("next").addEventListener("click", () => {
+      currentTrack = (currentTrack + 1) % tracks.length;
+      loadTrack(currentTrack);
+    });
+    document.getElementById("prev").addEventListener("click", () => {
+      currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
+      loadTrack(currentTrack);
+    });
 
-  // Modal
-  const modal=document.getElementById('modal');
-  const modalImg=document.getElementById('modal-img');
-  const modalTitle=document.getElementById('modal-title');
-  const modalDesc=document.getElementById('modal-desc');
-  const modalTools=document.getElementById('modal-tools');
-  const modalClose=document.getElementById('modal-close');
-  cards.forEach(card=>{card.querySelector('img').addEventListener('click',()=>{
-    modal.style.display='flex';
-    modalImg.src=card.querySelector('img').src;
-    modalTitle.textContent=card.querySelector('h2').textContent;
-    modalDesc.textContent=card.querySelector('p').textContent;
-    modalTools.textContent=card.querySelector('.tools').textContent;
-  });});
-  modalClose.addEventListener('click',()=>{modal.style.display='none';});
-  modal.addEventListener('click',e=>{if(e.target===modal) modal.style.display='none';});
-</script>
-
+    // ===== Artist Submission Form =====
+    document.getElementById("artist-form").addEventListener("submit", function(e){
+      e.preventDefault();
+      alert("Submission received! Admin will approve before posting.");
+      this.reset();
+    });
+  </script>
 </body>
-                                </html>
+</html>
