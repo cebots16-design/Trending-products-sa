@@ -1,182 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Ouma Hive | Multi-Creator & Owner MVP</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{margin:0;font-family:'Arial',sans-serif;background:#111;color:#fff;}
-header{background:#000;padding:30px;text-align:center;position:sticky;top:0;z-index:100;}
-header h1{font-size:36px;color:#ffcc00;margin:0;text-shadow:2px 2px #222;}
-header p{margin:5px 0 0 0;color:#ccc;font-size:16px;}
-nav{background:#1a1a1a;padding:12px;text-align:center;}
-nav a{color:#fff;margin:0 18px;font-weight:bold;font-size:16px;transition:color 0.2s;}
-nav a:hover{color:#ffcc00;}
-.hero{text-align:center;padding:60px 20px;background:linear-gradient(135deg,#222,#111);}
-.hero h2{font-size:32px;color:#ffcc00;margin-bottom:10px;}
-.hero p{font-size:18px;color:#ccc;max-width:600px;margin:auto;}
-.container{max-width:1200px;margin:auto;padding:30px 20px;}
-.section-title{font-size:28px;color:#ffcc00;border-bottom:2px solid #ffcc00;display:inline-block;padding-bottom:5px;margin-bottom:20px;}
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
-.card{background:#1e1e1e;padding:25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.3);transition:transform 0.2s,box-shadow 0.2s;}
-.card:hover{transform:translateY(-5px);box-shadow:0 8px 25px rgba(0,0,0,0.5);}
-.card h3{margin-top:0;font-size:22px;color:#ffcc00;}
-.card p{font-size:16px;line-height:1.5;color:#ddd;}
-.btn{background:#ffcc00;color:#111;padding:12px 18px;border:none;border-radius:8px;font-weight:bold;margin-top:15px;display:inline-block;cursor:pointer;transition:all 0.2s;}
-.btn:hover{opacity:0.9;transform:scale(1.02);}
-.submit-box{background:#222;padding:25px;border-radius:12px;margin-top:40px;box-shadow:0 4px 15px rgba(0,0,0,0.3);}
-input,textarea,select{width:100%;padding:12px;margin:10px 0;border-radius:8px;border:1px solid #555;background:#111;color:#fff;font-size:16px;}
-input::placeholder,textarea::placeholder{color:#aaa;}
-footer{text-align:center;padding:20px;background:#000;color:#ccc;margin-top:50px;font-size:14px;}
-#dashboards{display:flex;flex-wrap:wrap;gap:20px;margin-top:20px;}
-.dashboard{flex:1 1 300px;background:#222;padding:20px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.3);}
-.dashboard h3{color:#ffcc00;margin-top:0;}
-ul{padding-left:20px;}
-audio,video{width:100%;margin-top:10px;border-radius:8px;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ouma Hive Creatives</title>
+  <style>
+    /* ===== Global Styles ===== */
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: #f0f2f5;
+      color: #1c1e21;
+    }
+    header {
+      background: #fff;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: #1877f2;
+    }
+    .filters {
+      display: flex;
+      gap: 1rem;
+    }
+    .filters button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 20px;
+      background: #e4e6eb;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .filters button.active,
+    .filters button:hover {
+      background: #1877f2;
+      color: #fff;
+    }
+
+    /* ===== Feed ===== */
+    .feed {
+      max-width: 900px;
+      margin: 2rem auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 0 1rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+    .card img {
+      width: 100%;
+      display: block;
+      cursor: pointer;
+    }
+    .card-content {
+      padding: 1rem;
+    }
+    .card-content h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1.2rem;
+    }
+    .card-content p {
+      margin: 0 0 0.5rem;
+      color: #606770;
+    }
+    .card-content .tools {
+      font-size: 0.9rem;
+      color: #90949c;
+    }
+    .card-actions {
+      display: flex;
+      gap: 1rem;
+      padding: 0.5rem 1rem 1rem;
+      border-top: 1px solid #e4e6eb;
+    }
+    .card-actions button {
+      border: none;
+      background: none;
+      color: #606770;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+    .card-actions button:hover {
+      color: #1877f2;
+    }
+
+    /* ===== Modal ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+      padding: 1rem;
+      position: relative;
+    }
+    .modal-content img {
+      width: 100%;
+      display: block;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #1877f2;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .filters {
+        margin-top: 0.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <h1>🔥 Ouma Hive</h1>
-  <p>Multi-Creator MVP | Creator & Owner Earnings</p>
-</header>
+  <!-- ===== Header ===== -->
+  <header>
+    <h1>Ouma Hive Creatives</h1>
+    <div class="filters">
+      <button class="active" data-category="all">All</button>
+      <button data-category="graphic">Graphics</button>
+      <button data-category="motion">Motion</button>
+      <button data-category="branding">Branding</button>
+      <button data-category="social">Social</button>
+    </div>
+  </header>
 
-<nav>
-  <a href="#opportunities">Opportunities</a>
-  <a href="#creatives">Creatives</a>
-  <a href="#hustles">Hustles</a>
-  <a href="#businesses">Businesses</a>
-  <a href="#media">Media</a>
-  <a href="#submit">Submit</a>
-  <a href="#dashboards">Dashboards</a>
-</nav>
+  <!-- ===== Feed ===== -->
+  <div class="feed" id="feed">
+    <!-- Card Example -->
+    <div class="card" data-category="graphic">
+      <img src="https://source.unsplash.com/random/800x450?design" alt="Creative 1">
+      <div class="card-content">
+        <h2>Creative Graphic Design</h2>
+        <p>Modern poster design for a digital campaign.</p>
+        <p class="tools">Tools: Illustrator, Photoshop</p>
+      </div>
+      <div class="card-actions">
+        <button>👍 Like</button>
+        <button>💬 Comment</button>
+        <button>🔗 Share</button>
+      </div>
+    </div>
 
-<section class="hero">
-  <h2>Welcome to Ouma Hive</h2>
-  <p>Creators post, owner earns a cut. Track coins in real time, grow your hive, and level up!</p>
-</section>
+    <div class="card" data-category="motion">
+      <img src="https://source.unsplash.com/random/800x450?motion" alt="Creative 2">
+      <div class="card-content">
+        <h2>Motion Graphics Project</h2>
+        <p>Animated short for social media promotion.</p>
+        <p class="tools">Tools: After Effects, Premiere Pro</p>
+      </div>
+      <div class="card-actions">
+        <button>👍 Like</button>
+        <button>💬 Comment</button>
+        <button>🔗 Share</button>
+      </div>
+    </div>
 
-<div class="container">
-
-  <h2 class="section-title" id="opportunities">💼 Opportunities</h2>
-  <div class="cards-grid" id="opportunitiesGrid"></div>
-
-  <h2 class="section-title" id="creatives">🎨 Creatives</h2>
-  <div class="cards-grid" id="creativesGrid"></div>
-
-  <h2 class="section-title" id="hustles">🚀 Hustles</h2>
-  <div class="cards-grid" id="hustlesGrid"></div>
-
-  <h2 class="section-title" id="businesses">🏢 Local Businesses</h2>
-  <div class="cards-grid" id="businessesGrid"></div>
-
-  <h2 class="section-title" id="media">🎵 Music / 🎥 Video</h2>
-  <div class="cards-grid" id="mediaGrid"></div>
-
-  <div class="submit-box" id="submit">
-    <h2 class="section-title">📢 Submit Post</h2>
-    <input type="text" id="creatorName" placeholder="Creator Name">
-    <input type="text" id="postTitle" placeholder="Title">
-    <textarea id="postDesc" placeholder="Description"></textarea>
-    <select id="postType">
-      <option value="opportunity">Opportunity</option>
-      <option value="creative">Creative</option>
-      <option value="hustle">Hustle</option>
-      <option value="business">Business</option>
-      <option value="media">Music/Video</option>
-    </select>
-    <input type="text" id="mediaURL" placeholder="Media URL (optional)">
-    <button class="btn" onclick="addPost()">Submit</button>
+    <!-- Add more cards here -->
   </div>
 
-  <h2 class="section-title" id="dashboards">📊 Dashboards</h2>
-  <div id="dashboards"></div>
+  <!-- ===== Modal ===== -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">×</button>
+      <img id="modal-img" src="" alt="Creative">
+      <h2 id="modal-title"></h2>
+      <p id="modal-desc"></p>
+      <p id="modal-tools"></p>
+    </div>
+  </div>
 
-</div>
+  <!-- ===== Scripts ===== -->
+  <script>
+    // ===== Filter Buttons =====
+    const filterButtons = document.querySelectorAll('.filters button');
+    const cards = document.querySelectorAll('.card');
 
-<footer>
-  <p>© 2026 Ouma Hive | Built by Cebo TS | Multi-Creator + Owner Simulation</p>
-</footer>
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const category = btn.dataset.category;
+        cards.forEach(card => {
+          if(category === 'all' || card.dataset.category === category){
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
 
-<script>
-// Data
-let posts = {
-  opportunity: [],
-  creative: [],
-  hustle: [],
-  business: [],
-  media: []
-};
+    // ===== Modal =====
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modal-img');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalTools = document.getElementById('modal-tools');
+    const modalClose = document.getElementById('modal-close');
 
-let creators = {}; // {creatorName: {coins:0, posts:[]}}
-let ownerCoins = 0;
+    cards.forEach(card => {
+      card.querySelector('img').addEventListener('click', () => {
+        modal.style.display = 'flex';
+        modalImg.src = card.querySelector('img').src;
+        modalTitle.textContent = card.querySelector('h2').textContent;
+        modalDesc.textContent = card.querySelector('p').textContent;
+        modalTools.textContent = card.querySelector('.tools').textContent;
+      });
+    });
 
-// Render section
-function renderSection(type){
-  const grid = document.getElementById(type+'Grid');
-  grid.innerHTML = posts[type].map((p,i)=>`<div class="card">
-    <h3>${p.title}</h3>
-    <p>${p.desc}</p>
-    ${p.url? (p.url.includes('.mp4')?`<video controls src="${p.url}" onplay="earnCoins('${p.creator}','${type}',${i})"></video>`:`<audio controls src="${p.url}" onplay="earnCoins('${p.creator}','${type}',${i})"></audio>`):''}
-    <p style="font-size:12px;color:#aaa">Creator: ${p.creator}</p>
-    <button class="btn" onclick="earnCoins('${p.creator}','${type}',${i})">Simulate View / Play</button>
-  </div>`).join('');
-}
+    modalClose.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
 
-// Render all sections
-function renderAll(){
-  ['opportunity','creative','hustle','business','media'].forEach(renderSection);
-  renderDashboards();
-}
-
-// Add post
-function addPost(){
-  const c=document.getElementById('creatorName').value.trim();
-  const t=document.getElementById('postTitle').value.trim();
-  const d=document.getElementById('postDesc').value.trim();
-  const type=document.getElementById('postType').value;
-  const url=document.getElementById('mediaURL').value.trim();
-  if(!c||!t||!d) return alert("Fill creator, title & description!");
-  if(!creators[c]) creators[c]={coins:0, posts:[]};
-  const post={creator:c,title:t,desc:d,url:url};
-  posts[type].push(post);
-  creators[c].posts.push(post);
-  document.getElementById('creatorName').value='';
-  document.getElementById('postTitle').value='';
-  document.getElementById('postDesc').value='';
-  document.getElementById('mediaURL').value='';
-  renderAll();
-}
-
-// Earn coins
-function earnCoins(creator,type,index){
-  creators[creator].coins+=5;
-  ownerCoins+=2;
-  renderDashboards();
-}
-
-// Render dashboards
-function renderDashboards(){
-  const dash=document.getElementById('dashboards');
-  dash.innerHTML='';
-  Object.keys(creators).forEach(c=>{
-    let div=document.createElement('div');
-    div.className='dashboard';
-    div.innerHTML=`<h3>${c} Dashboard</h3>
-      <p>Coins: ${creators[c].coins}</p>
-      <ul>${creators[c].posts.map(p=>`<li>${p.title} (${p.desc})</li>`).join('')}</ul>`;
-    dash.appendChild(div);
-  });
-  // Owner dashboard
-  let ownerDiv=document.createElement('div');
-  ownerDiv.className='dashboard';
-  ownerDiv.innerHTML=`<h3>Owner Dashboard</h3><p>Coins: ${ownerCoins}</p>`;
-  dash.appendChild(ownerDiv);
-}
-
-renderAll();
-</script>
+    modal.addEventListener('click', (e) => {
+      if(e.target === modal) modal.style.display = 'none';
+    });
+  </script>
 
 </body>
 </html>
