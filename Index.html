@@ -1,287 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Ouma Hive</title>
+<title>Classroom Hive</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- FONT -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
 <style>
-body{
-  margin:0;
-  background:#0f0f0f;
-  color:#fff;
-  font-family:'Inter', sans-serif;
-  font-size:14px;
-}
-
-header{
-  position:sticky;
-  top:0;
-  background:#0f0f0f;
-  padding:12px;
-  text-align:center;
-  border-bottom:1px solid #222;
-}
-
-header h1{
-  margin:0;
-  color:#ffcc00;
-  font-weight:600;
-}
-
-.container{
-  max-width:600px;
-  margin:auto;
-  padding:15px;
-}
-
-/* Boxes */
-.box{
-  background:#1c1c1c;
-  padding:15px;
-  border-radius:14px;
-  margin-bottom:20px;
-}
-
-input, textarea{
-  width:100%;
-  margin:6px 0;
-  padding:10px;
-  border-radius:8px;
-  border:none;
-  background:#2a2a2a;
-  color:#fff;
-  font-family:'Inter', sans-serif;
-}
-
-button{
-  background:#ffcc00;
-  color:#000;
-  border:none;
-  padding:10px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-}
-
-/* Feed */
-.card{
-  background:#1c1c1c;
-  border-radius:16px;
-  padding:15px;
-  margin-bottom:15px;
-  transition:0.2s;
-}
-
-.card:hover{
-  transform:scale(1.01);
-}
-
-.user{
-  display:flex;
-  align-items:center;
-  margin-bottom:10px;
-}
-
-.user img{
-  border-radius:50%;
-  margin-right:10px;
-}
-
-.actions{
-  display:flex;
-  gap:10px;
-  margin-top:10px;
-}
-
-.action-btn{
-  background:#2a2a2a;
-  border:none;
-  padding:6px 10px;
-  border-radius:8px;
-  color:#fff;
-  cursor:pointer;
-}
-
-.action-btn:hover{
-  background:#ffcc00;
-  color:#000;
-}
-
-.small{
-  font-size:11px;
-  color:#888;
-}
-
-/* Toast */
-.toast{
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#ffcc00;
-  color:#000;
-  padding:10px 15px;
-  border-radius:10px;
-  display:none;
-}
+body{font-family:Arial;margin:0;background:#0f0f0f;color:white}
+header{padding:15px;text-align:center;background:#111;color:#ffcc00}
+.container{max-width:600px;margin:auto;padding:10px}
+.card{background:#1c1c1c;padding:12px;border-radius:12px;margin:10px 0}
+input,textarea{width:100%;padding:10px;margin:5px 0;background:#222;color:white;border:none}
+button{padding:10px;background:#ffcc00;border:none;font-weight:bold;cursor:pointer}
+.badge{color:#ffcc00;font-size:12px}
 </style>
 </head>
 
 <body>
 
-<header>
-  <h1>🔥 Ouma Hive</h1>
-</header>
+<header>📚 Classroom Hive</header>
 
 <div class="container">
 
-<!-- LOGIN -->
-<div class="box">
-  <input id="username" placeholder="Enter your name">
-  <button onclick="login()">Enter Hive</button>
-</div>
+<input id="name" placeholder="Enter name">
+<button onclick="login()">Enter Classroom</button>
 
-<!-- POST -->
-<div class="box">
-  <input id="title" placeholder="What's on your mind?">
-  <textarea id="desc" placeholder="Say something..."></textarea>
-  <input id="url" placeholder="Media URL (optional)">
-  <button onclick="addPost()">Post</button>
-</div>
+<hr>
 
-<!-- FEED -->
+<input id="title" placeholder="Question or Lesson Title">
+<textarea id="content" placeholder="Write here..."></textarea>
+
+<button onclick="postQuestion()">Ask Question</button>
+<button onclick="postLesson()">Post Lesson (Teachers)</button>
+
 <div id="feed"></div>
 
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script>
 
-// DATA
-let posts = JSON.parse(localStorage.getItem('posts')) || [];
-let users = JSON.parse(localStorage.getItem('users')) || {};
-let currentUser = localStorage.getItem('user') || "";
+// 🔥 FIREBASE CONFIG (PASTE YOURS HERE)
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_ID"
+};
 
-// SAVE
-function save(){
-  localStorage.setItem('posts', JSON.stringify(posts));
-  localStorage.setItem('users', JSON.stringify(users));
-}
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-// LOGIN
+let currentUser = "";
+
+// 👤 LOGIN (simple)
 function login(){
-  let name = document.getElementById('username').value.trim();
-  if(!name) return alert("Enter name");
+  currentUser = document.getElementById("name").value;
+  if(!currentUser) return alert("Enter name");
 
-  currentUser = name;
-  localStorage.setItem('user', name);
-
-  if(!users[name]){
-    users[name] = {coins:0};
-  }
-
-  showToast("Welcome " + name + " 🔥");
+  showFeed();
 }
 
-// ADD POST
-function addPost(){
+// 📌 POST QUESTION
+function postQuestion(){
   if(!currentUser) return alert("Login first");
 
-  let title = document.getElementById('title').value.trim();
-  let desc = document.getElementById('desc').value.trim();
-  let url = document.getElementById('url').value.trim();
-
-  if(!title || !desc) return alert("Fill fields");
-
-  posts.unshift({
-    id: Date.now(),
+  db.collection("posts").add({
     user: currentUser,
-    title,
-    desc,
-    url,
-    views:0,
-    viewers:[]
+    type: "question",
+    title: title.value,
+    content: content.value,
+    time: Date.now()
   });
 
-  save();
-  renderFeed();
+  title.value = "";
+  content.value = "";
 }
 
-// FEED MIX
-function getFeed(){
-  let sorted = [...posts].sort((a,b)=>b.views-a.views);
-  let random = [...posts].sort(()=>Math.random()-0.5);
-  return [...sorted.slice(0,10), ...random.slice(0,10)];
+// 📖 POST LESSON
+function postLesson(){
+  if(!currentUser) return alert("Login first");
+
+  db.collection("posts").add({
+    user: currentUser,
+    type: "lesson",
+    title: title.value,
+    content: content.value,
+    time: Date.now()
+  });
+
+  title.value = "";
+  content.value = "";
 }
 
-// MEDIA
-function media(url){
-  if(url.match(/\.(mp4|webm)$/)) return `<video controls src="${url}" style="width:100%;border-radius:10px;"></video>`;
-  if(url.match(/\.(mp3|wav)$/)) return `<audio controls src="${url}" style="width:100%;"></audio>`;
-  return "";
+// 📚 LOAD FEED (REAL TIME)
+function showFeed(){
+  db.collection("posts")
+    .orderBy("time","desc")
+    .onSnapshot(snapshot=>{
+      let feed = document.getElementById("feed");
+      feed.innerHTML = "";
+
+      snapshot.forEach(doc=>{
+        let p = doc.data();
+
+        feed.innerHTML += `
+          <div class="card">
+            <div class="badge">${p.type.toUpperCase()} • ${p.user}</div>
+            <h3>${p.title}</h3>
+            <p>${p.content}</p>
+          </div>
+        `;
+      });
+    });
 }
-
-// ENGAGE
-function engage(id){
-  let post = posts.find(p=>p.id===id);
-  if(!post || post.viewers.includes(currentUser)) return;
-
-  post.viewers.push(currentUser);
-  post.views++;
-
-  users[post.user].coins += 3;
-
-  save();
-  renderFeed();
-
-  showToast("+3 coins 🔥");
-}
-
-// RENDER
-function renderFeed(){
-  let feed = document.getElementById('feed');
-  let data = getFeed();
-
-  feed.innerHTML = data.map(p=>`
-    <div class="card">
-
-      <div class="user">
-        <img src="https://i.pravatar.cc/40?u=${p.user}">
-        <strong>${p.user}</strong>
-      </div>
-
-      <p><strong>${p.title}</strong></p>
-      <p>${p.desc}</p>
-
-      ${p.url ? media(p.url) : ""}
-
-      <div class="actions">
-        <button class="action-btn" onclick="engage(${p.id})">🔥</button>
-        <button class="action-btn">😂</button>
-        <button class="action-btn">💬</button>
-      </div>
-
-      <p class="small">👁 ${p.views} views</p>
-
-    </div>
-  `).join('');
-}
-
-// TOAST
-function showToast(msg){
-  let t = document.getElementById('toast');
-  t.innerText = msg;
-  t.style.display = "block";
-  setTimeout(()=>t.style.display="none",2000);
-}
-
-// INIT
-renderFeed();
 
 </script>
 
