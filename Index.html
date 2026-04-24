@@ -1,139 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ouma Hive</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- FONT -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  background:#0f0f0f;
+  color:#fff;
+  font-family:'Inter', sans-serif;
+  font-size:14px;
+}
+
+header{
+  position:sticky;
+  top:0;
+  background:#0f0f0f;
+  padding:12px;
+  text-align:center;
+  border-bottom:1px solid #222;
+}
+
+header h1{
+  margin:0;
+  color:#ffcc00;
+  font-weight:600;
+}
+
+.container{
+  max-width:600px;
+  margin:auto;
+  padding:15px;
+}
+
+/* Boxes */
+.box{
+  background:#1c1c1c;
+  padding:15px;
+  border-radius:14px;
+  margin-bottom:20px;
+}
+
+input, textarea{
+  width:100%;
+  margin:6px 0;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  background:#2a2a2a;
+  color:#fff;
+  font-family:'Inter', sans-serif;
+}
+
+button{
+  background:#ffcc00;
+  color:#000;
+  border:none;
+  padding:10px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+/* Feed */
+.card{
+  background:#1c1c1c;
+  border-radius:16px;
+  padding:15px;
+  margin-bottom:15px;
+  transition:0.2s;
+}
+
+.card:hover{
+  transform:scale(1.01);
+}
+
+.user{
+  display:flex;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.user img{
+  border-radius:50%;
+  margin-right:10px;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.action-btn{
+  background:#2a2a2a;
+  border:none;
+  padding:6px 10px;
+  border-radius:8px;
+  color:#fff;
+  cursor:pointer;
+}
+
+.action-btn:hover{
+  background:#ffcc00;
+  color:#000;
+}
+
+.small{
+  font-size:11px;
+  color:#888;
+}
+
+/* Toast */
+.toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#ffcc00;
+  color:#000;
+  padding:10px 15px;
+  border-radius:10px;
+  display:none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🔥 Ouma Hive</h1>
+</header>
+
+<div class="container">
+
+<!-- LOGIN -->
+<div class="box">
+  <input id="username" placeholder="Enter your name">
+  <button onclick="login()">Enter Hive</button>
+</div>
+
+<!-- POST -->
+<div class="box">
+  <input id="title" placeholder="What's on your mind?">
+  <textarea id="desc" placeholder="Say something..."></textarea>
+  <input id="url" placeholder="Media URL (optional)">
+  <button onclick="addPost()">Post</button>
+</div>
+
+<!-- FEED -->
+<div id="feed"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-let posts = JSON.parse(localStorage.getItem("posts")) || [
-  {
-    title:"Creative Graphic",
-    desc:"Poster design for campaign",
-    tools:"Photoshop, Illustrator",
-    category:"graphic",
-    img:"https://source.unsplash.com/random/800x450?design"
-  }
-];
 
-const feed = document.getElementById("feed");
-const modal = document.getElementById("modal");
+// DATA
+let posts = JSON.parse(localStorage.getItem('posts')) || [];
+let users = JSON.parse(localStorage.getItem('users')) || {};
+let currentUser = localStorage.getItem('user') || "";
 
-const mimg = document.getElementById("mimg");
-const mtitle = document.getElementById("mtitle");
-const mdesc = document.getElementById("mdesc");
-const mtools = document.getElementById("mtools");
-const closeBtn = document.getElementById("close");
-
+// SAVE
 function save(){
-  localStorage.setItem("posts", JSON.stringify(posts));
+  localStorage.setItem('posts', JSON.stringify(posts));
+  localStorage.setItem('users', JSON.stringify(users));
 }
 
-/* =======================
-   RENDER FUNCTION (SAFE)
-======================= */
-function render(filter="all"){
-  feed.innerHTML="";
+// LOGIN
+function login(){
+  let name = document.getElementById('username').value.trim();
+  if(!name) return alert("Enter name");
 
-  const filtered = posts.filter(p => filter==="all" || p.category===filter);
+  currentUser = name;
+  localStorage.setItem('user', name);
 
-  if(filtered.length === 0){
-    feed.innerHTML = "<p>No posts found.</p>";
-    return;
+  if(!users[name]){
+    users[name] = {coins:0};
   }
 
-  filtered.forEach((p)=>{
-    const card=document.createElement("div");
-    card.className="card";
-
-    card.innerHTML=`
-      <img src="${p.img}" alt="post image">
-      <div class="card-content">
-        <h3>${p.title}</h3>
-        <p>${p.desc}</p>
-        <p class="tools">${p.tools}</p>
-      </div>
-      <div class="card-actions">
-        <button class="like">❤️ Like</button>
-        <button class="comment">💬 Comment</button>
-        <button class="share">🔗 Share</button>
-      </div>
-    `;
-
-    /* =======================
-       FORCE CLICK WORKING
-    ======================= */
-    const img = card.querySelector("img");
-
-    img.addEventListener("click", () => {
-      console.log("Modal opened:", p.title);
-
-      mimg.src = p.img;
-      mtitle.textContent = p.title;
-      mdesc.textContent = p.desc;
-      mtools.textContent = p.tools;
-
-      modal.style.display = "flex";
-    });
-
-    /* optional feedback so you KNOW it clicked */
-    card.querySelector(".like").onclick = () => {
-      alert("Liked ❤️");
-    };
-
-    feed.appendChild(card);
-  });
+  showToast("Welcome " + name + " 🔥");
 }
 
-/* =======================
-   FILTERS
-======================= */
-document.querySelectorAll(".filters button").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    document.querySelectorAll(".filters button")
-      .forEach(b=>b.classList.remove("active"));
+// ADD POST
+function addPost(){
+  if(!currentUser) return alert("Login first");
 
-    btn.classList.add("active");
-    render(btn.dataset.filter);
+  let title = document.getElementById('title').value.trim();
+  let desc = document.getElementById('desc').value.trim();
+  let url = document.getElementById('url').value.trim();
+
+  if(!title || !desc) return alert("Fill fields");
+
+  posts.unshift({
+    id: Date.now(),
+    user: currentUser,
+    title,
+    desc,
+    url,
+    views:0,
+    viewers:[]
   });
-});
 
-/* =======================
-   FORM (CONFIRMED WORKING)
-======================= */
-document.getElementById("postForm").addEventListener("submit",(e)=>{
-  e.preventDefault();
-
-  const newPost={
-    title:document.getElementById("title").value.trim(),
-    desc:document.getElementById("desc").value.trim(),
-    tools:document.getElementById("tools").value.trim(),
-    category:document.getElementById("category").value,
-    img:document.getElementById("img").value.trim()
-  };
-
-  if(!newPost.title || !newPost.desc || !newPost.img){
-    alert("Please fill in all required fields");
-    return;
-  }
-
-  posts.unshift(newPost);
   save();
-  render();
+  renderFeed();
+}
 
-  alert("Post published successfully 🚀");
+// FEED MIX
+function getFeed(){
+  let sorted = [...posts].sort((a,b)=>b.views-a.views);
+  let random = [...posts].sort(()=>Math.random()-0.5);
+  return [...sorted.slice(0,10), ...random.slice(0,10)];
+}
 
-  e.target.reset();
-});
+// MEDIA
+function media(url){
+  if(url.match(/\.(mp4|webm)$/)) return `<video controls src="${url}" style="width:100%;border-radius:10px;"></video>`;
+  if(url.match(/\.(mp3|wav)$/)) return `<audio controls src="${url}" style="width:100%;"></audio>`;
+  return "";
+}
 
-/* =======================
-   MODAL CLOSE (ROBUST)
-======================= */
-closeBtn.addEventListener("click",()=>{
-  modal.style.display="none";
-});
+// ENGAGE
+function engage(id){
+  let post = posts.find(p=>p.id===id);
+  if(!post || post.viewers.includes(currentUser)) return;
 
-modal.addEventListener("click",(e)=>{
-  if(e.target === modal){
-    modal.style.display="none";
-  }
-});
+  post.viewers.push(currentUser);
+  post.views++;
 
-/* =======================
-   INIT
-======================= */
-render();
+  users[post.user].coins += 3;
+
+  save();
+  renderFeed();
+
+  showToast("+3 coins 🔥");
+}
+
+// RENDER
+function renderFeed(){
+  let feed = document.getElementById('feed');
+  let data = getFeed();
+
+  feed.innerHTML = data.map(p=>`
+    <div class="card">
+
+      <div class="user">
+        <img src="https://i.pravatar.cc/40?u=${p.user}">
+        <strong>${p.user}</strong>
+      </div>
+
+      <p><strong>${p.title}</strong></p>
+      <p>${p.desc}</p>
+
+      ${p.url ? media(p.url) : ""}
+
+      <div class="actions">
+        <button class="action-btn" onclick="engage(${p.id})">🔥</button>
+        <button class="action-btn">😂</button>
+        <button class="action-btn">💬</button>
+      </div>
+
+      <p class="small">👁 ${p.views} views</p>
+
+    </div>
+  `).join('');
+}
+
+// TOAST
+function showToast(msg){
+  let t = document.getElementById('toast');
+  t.innerText = msg;
+  t.style.display = "block";
+  setTimeout(()=>t.style.display="none",2000);
+}
+
+// INIT
+renderFeed();
+
 </script>
+
+</body>
+</html>
